@@ -1,5 +1,5 @@
 <template>
-  <div class="page-container">
+<div class="page-container">
     <md-app>
       <md-app-toolbar class="md-primary">
         <span class="md-title">My Title</span>
@@ -47,7 +47,7 @@
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style>
   .md-app {
     max-height: 400px;
     border: 1px solid rgba(#000, .12);
