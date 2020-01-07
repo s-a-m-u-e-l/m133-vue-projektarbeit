@@ -1,61 +1,65 @@
 <template>
-  <div class="page-container">
-    <md-app>
-      <md-app-toolbar class="md-primary">
-        <span class="md-title">Adressverwaltung</span>
-      </md-app-toolbar>
+    <md-app class="page-container">
+        <md-app-toolbar class="md-primary">
+            <span class="md-title">Adressverwaltung</span>
+        </md-app-toolbar>
 
-      <md-app-drawer md-permanent="full">
-        <md-toolbar class="md-transparent" md-elevation="0">
-          Navigation
-        </md-toolbar>
+        <md-app-drawer class="sidenav" md-permanent="full">
+            <md-toolbar class="md-transparent" md-elevation="0">
+                Navigation
+            </md-toolbar>
 
-        <md-list>
-        <router-link to="/personenverwaltung">
-          <md-list-item>
-            <md-icon>people</md-icon>
-            <span class="md-list-item-text">Perosnonenverwaltung</span>
-             </md-list-item>
-            </router-link>
-         
+            <md-list>
+                <router-link to="/personenverwaltung">
+                    <md-list-item>
+                        <md-icon>people</md-icon>
+                        <span class="md-list-item-text">Perosnonenverwaltung</span>
+                    </md-list-item>
+                </router-link>
 
-          <md-list-item>
-            <md-icon>landscape</md-icon>
-            <span class="md-list-item-text">Ortverwaltung</span>
-          </md-list-item>
+                <router-link to="/ortverwaltung">
+                    <md-list-item>
+                        <md-icon>landscape</md-icon>
+                        <span class="md-list-item-text">Ortverwaltung</span>
+                    </md-list-item>
+                </router-link>
 
-          <md-list-item to="/landverwaltung">
-            <md-icon>language</md-icon>
-            <span class="md-list-item-text">Landverwaltung</span>
-          </md-list-item>
+                <md-list-item to="/landverwaltung">
+                    <md-icon>language</md-icon>
+                    <span class="md-list-item-text">Landverwaltung</span>
+                </md-list-item>
+            </md-list>
+        </md-app-drawer>
 
-       
-        </md-list>
-      </md-app-drawer>
-
-      <md-app-content>
-        <router-view/>
-      </md-app-content>
+        <md-app-content>
+            <router-view/>
+        </md-app-content>
     </md-app>
-  </div>
 </template>
 
 <style lang="scss" scoped>
-  .md-app {
-    max-height: 400px;
-    border: 1px solid rgba(#000, .12);
-  }
+    .md-app {
+        border: 1px solid rgba(#000, 0.12);
+    }
 
-   // Demo purposes only
-  .md-drawer {
-    width: 230px;
-    max-width: calc(100vw - 125px);
-  }
+    // Demo purposes only
+    .md-drawer {
+        width: 230px;
+        max-width: calc(100vw - 125px);
+    }
+
+    .sidenav {
+        width: auto;
+    }
+
+    .page-container {
+        height: 100vh;
+    }
 
 </style>
 
 <script>
-export default {
-  name: 'Normal'
-}
+    export default {
+        name: "Normal"
+    };
 </script>
