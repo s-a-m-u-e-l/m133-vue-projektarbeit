@@ -12,9 +12,18 @@ function person() {
 
 function ort() {
     switch ( getValue('post')->func ) {
-        case 'lesen':
+        case 'read':
             $ortList = db_select_ort();
-            return formatMessage(true, 'success', $ortList);
+            return $ortList;
+    }
+    return null;
+}
+
+function land() {
+    switch ( getValue('post')->func ) {
+        case 'read':
+            $landList = db_select_land();
+            return $landList;
     }
     return null;
 }
