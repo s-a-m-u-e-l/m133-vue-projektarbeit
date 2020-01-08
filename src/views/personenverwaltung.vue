@@ -26,28 +26,28 @@
               </md-field>
             </div>
           </div>
-          
+
             <div class="md-layout-item md-small-size-100">
-              <md-field :class="getValidationClass('lastName')">
-                <label for="last-name">Strasse</label>
-                <md-input name="last-name" id="last-name" autocomplete="family-name" v-model="form.lastName" :disabled="sending" />
+              <md-field :class="getValidationClass('strasse')">
+                <label for="strasse">Strasse</label>
+                <md-input name="last-name" id="strasse" autocomplete="family-name" v-model="form.lastName" :disabled="sending" />
                 <span class="md-error" v-if="!$v.form.lastName.required">The last name is required</span>
                 <span class="md-error" v-else-if="!$v.form.lastName.minlength">Invalid last name</span>
               </md-field>
             </div>
           <div class="md-layout md-gutter">
              <div class="md-layout-item md-size-30">
-              <md-field :class="getValidationClass('lastName')">
-                <label for="last-name">PLZ</label>
-                <md-input name="last-name" id="last-name" autocomplete="family-name" v-model="form.lastName" :disabled="sending" />
+              <md-field :class="getValidationClass('plz')">
+                <label for="plz">PLZ</label>
+                <md-input name="last-name" id="plz" autocomplete="family-name" v-model="form.lastName" :disabled="sending" />
                 <span class="md-error" v-if="!$v.form.lastName.required">The last name is required</span>
                 <span class="md-error" v-else-if="!$v.form.lastName.minlength">Invalid last name</span>
               </md-field>
             </div>
              <div class="md-layout-item md-small-size-70">
-              <md-field :class="getValidationClass('lastName')">
-                <label for="last-name">Ort</label>
-                <md-input name="last-name" id="last-name" autocomplete="family-name" v-model="form.lastName" :disabled="sending" />
+              <md-field :class="getValidationClass('ort')">
+                <label for="ort">Ort</label>
+                <md-input name="last-name" id="ort" autocomplete="family-name" v-model="form.lastName" :disabled="sending" />
                 <span class="md-error" v-if="!$v.form.lastName.required">The last name is required</span>
                 <span class="md-error" v-else-if="!$v.form.lastName.minlength">Invalid last name</span>
               </md-field>
@@ -61,26 +61,26 @@
             <span class="md-error" v-else-if="!$v.form.email.email">Invalid email</span>
           </md-field>
  <div class="md-layout-item md-small-size-100">
-              <md-field :class="getValidationClass('lastName')">
-                <label for="last-name">Telefon Privat</label>
-                <md-input name="last-name" id="last-name" autocomplete="family-name" v-model="form.lastName" :disabled="sending" />
+              <md-field :class="getValidationClass('telefon')">
+                <label for="telefon">Telefon Privat</label>
+                <md-input name="last-name" id="telefon" autocomplete="family-name" v-model="form.lastName" :disabled="sending" />
                 <span class="md-error" v-if="!$v.form.lastName.required">The last name is required</span>
                 <span class="md-error" v-else-if="!$v.form.lastName.minlength">Invalid last name</span>
               </md-field>
             </div>
           <div class="md-layout-item md-small-size-100">
-              <md-field :class="getValidationClass('lastName')">
-                <label for="last-name">Telefon Geschäft</label>
-                <md-input name="last-name" id="last-name" autocomplete="family-name" v-model="form.lastName" :disabled="sending" />
+              <md-field :class="getValidationClass('telGesch')">
+                <label for="tel-gesch">Telefon Geschäft</label>
+                <md-input name="last-name" id="tel-gesch" autocomplete="family-name" v-model="form.lastName" :disabled="sending" />
                 <span class="md-error" v-if="!$v.form.lastName.required">The last name is required</span>
                 <span class="md-error" v-else-if="!$v.form.lastName.minlength">Invalid last name</span>
               </md-field>
             </div>
 
             <div class="md-layout-item md-small-size-100">
-              <md-field :class="getValidationClass('gender')">
-                <label for="gender">Land</label>
-                <md-select name="gender" id="gender" v-model="form.gender" md-dense :disabled="sending">
+              <md-field :class="getValidationClass('land')">
+                <label for="land">Land</label>
+                <md-select name="gender" id="land" v-model="form.gender" md-dense :disabled="sending">
                   <md-option></md-option>
                   <md-option value="M">M</md-option>
                   <md-option value="F">F</md-option>
@@ -91,10 +91,10 @@
         </md-card-content>
 
          <div class="md_button">
-     
+
       <md-button class="md-raised md-primary">suchen</md-button>
       <md-button class="md-raised md-primary">neu</md-button>
-      <md-button class="md-raised md-primary">speichern</md-button>
+      <md-button class="md-raised md-primary" type="submit">speichern</md-button>
       <md-button class="md-raised md-accent">löschen</md-button>
     </div>
       </md-card>
@@ -172,8 +172,9 @@
       saveUser () {
         this.axios.post('/api/index.php',
                 {
-                  id: 'person',
-                  func: 'speichern'
+                    id: 'person',
+                    func: 'speichern',
+                    person: this.form
                 }
         )
         .then(response => {

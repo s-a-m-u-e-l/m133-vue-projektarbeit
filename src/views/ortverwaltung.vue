@@ -28,7 +28,7 @@
 <script>
   const toLower = text => {
     return text.toString().toLowerCase()
-  }
+  };
 
   const searchByName = (items, term) => {
     if (term) {
@@ -36,7 +36,7 @@
     }
 
     return items
-  }
+  };
 
   export default {
     name: 'TableSearch',
