@@ -119,14 +119,14 @@ function db_select_person_pid( $pid ) {
  * @param  $values  Assoziativer Array mit den Werten
  */
 function db_insert_person($values) {
-	if ( empty($values['oid']) ) $oid = "Null";
+    if ( empty($values['oid']) ) $oid = "Null";
 	else $oid = "'".$values['oid']."'";
 	if ( empty($values['lid']) ) $lid = "Null";
 	else $lid = "'".$values['lid']."'";
 
 	$sql = "insert into personen (name, vorname, strasse, oid, email, tel_priv, tel_gesch, lid)
-		values ('".$values['name']."','".$values['vorname']."','".$values['strasse']."',".$oid.",'".
-		$values['email']."','".$values['tel_priv']."','".$values['tel_gesch']."',".$lid.")";
+		values ('".$values['firstName']."','".$values['lastName']."','".$values['strasse']."',".$oid.",'".
+		$values['email']."','".$values['telPriv']."','".$values['telGesch']."',".$lid.")";
         sqlQuery($sql);
 }
 

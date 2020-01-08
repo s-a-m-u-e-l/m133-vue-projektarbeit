@@ -10,19 +10,15 @@
             </md-toolbar>
 
             <md-list>
-                <router-link to="/personenverwaltung">
-                    <md-list-item>
-                        <md-icon>people</md-icon>
-                        <span class="md-list-item-text">Perosnonenverwaltung</span>
-                    </md-list-item>
-                </router-link>
+                <md-list-item to="/personenverwaltung">
+                    <md-icon>people</md-icon>
+                    <span class="md-list-item-text">Perosnonenverwaltung</span>
+                </md-list-item>
 
-                <router-link to="/ortverwaltung">
-                    <md-list-item>
-                        <md-icon>landscape</md-icon>
-                        <span class="md-list-item-text">Ortverwaltung</span>
-                    </md-list-item>
-                </router-link>
+                <md-list-item  to="/ortverwaltung">
+                    <md-icon>landscape</md-icon>
+                    <span class="md-list-item-text">Ortverwaltung</span>
+                </md-list-item>
 
                 <md-list-item to="/landverwaltung">
                     <md-icon>language</md-icon>

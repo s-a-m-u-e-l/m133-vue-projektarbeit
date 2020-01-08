@@ -3,10 +3,20 @@
 function person() {
     switch ( getValue('post')->func ) {
         case 'speichern':
-
-            db_insert_person( $values );
-            return 'appiii workss!!!';
+            $person = json_decode(json_encode(getValue('post')->person), true);
+            db_insert_person($person);
+            return $person;
     }
+    return null;
+}
+
+function ort() {
+    switch ( getValue('post')->func ) {
+        case 'lesen':
+            $ortList = db_select_ort();
+            return formatMessage(true, 'success', $ortList);
+    }
+    return null;
 }
 
 function personAlt() {
