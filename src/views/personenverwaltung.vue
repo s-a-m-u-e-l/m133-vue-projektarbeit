@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form novalidate class="md-layout" @submit.prevent="validateUser">
+    <form novalidate class="md-layout" @submit.prevent="saveUser()">
       <md-card class="md-layout-item md-size-50 md-small-size-100">
         <md-card-header>
           <div class="md-title">Personenverwaltung</div>
@@ -112,7 +112,7 @@
     minLength,
     maxLength
   } from 'vuelidate/lib/validators'
-
+/* eslint-disable */
   export default {
     name: 'FormValidation',
     mixins: [validationMixin],
@@ -153,7 +153,7 @@
     },
     methods: {
       getValidationClass (fieldName) {
-        const field = this.$v.form[fieldName]
+        const field = this.$v.form[fieldName];
 
         if (field) {
           return {
@@ -170,15 +170,16 @@
         this.form.email = null;
       },
       saveUser () {
-        this.sending = true;
-
-        // Instead of this timeout, here you can call your API
-        window.setTimeout(() => {
-          this.lastUser = `${this.form.firstName} ${this.form.lastName}`;
-          this.userSaved = true;
-          this.sending = false;
-          this.clearForm()
-        }, 1500)
+        this.axios.post('/api/index.php',
+                {
+                  id: 'person',
+                  func: 'speichern'
+                }
+        )
+        .then(response => {
+          this.data = response.data.data;
+          console.log(response.data);
+        });
       },
       validateUser () {
         this.$v.$touch();
