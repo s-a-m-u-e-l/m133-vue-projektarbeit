@@ -12,7 +12,7 @@
             <md-list>
                 <md-list-item to="/personenverwaltung">
                     <md-icon>people</md-icon>
-                    <span class="md-list-item-text">Perosnonenverwaltung</span>
+                    <span class="md-list-item-text">Persononenverwaltung</span>
                 </md-list-item>
 
                 <md-list-item  to="/ortverwaltung">

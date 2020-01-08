@@ -47,8 +47,8 @@
                             <md-field :class="getValidationClass('oid')">
                                 <label for="ort">Ort</label>
                                 <md-select name="gender" id="ort" v-model="person.oid" md-dense :disabled="sending">
-                                    <md-option value="">Select</md-option>
-                                    <md-option v-for="ort in ortList" :value="ort.oid" v-text="ort.plz+' '+ort.ort"></md-option>
+                                    <md-option ng-selected="true" disabled>Select</md-option>
+                                    <md-option v-for="ort in ortList" :value="ort.oid">{{ort.plz+' '+ort.ort}}</md-option>
                                 </md-select>
                                 <span class="md-error">The gender is required</span>
                             </md-field>
@@ -125,7 +125,7 @@
                 firstName: null,
                 lastName: null,
                 strasse: null,
-                oid: 0,
+                oid: null,
                 email: null,
                 telPriv: null,
                 telGesch: null
@@ -134,6 +134,9 @@
                 oid: 0,
                 plz: 0,
                 ort: null
+            }],
+            landList: [{
+
             }],
             userSaved: false,
             sending: false,
@@ -171,12 +174,21 @@
             this.axios
                 .post("/api/index.php", {
                     id: "ort",
-                    func: "lesen"
+                    func: "read"
                 })
                 .then(response => {
-                    console.log(response);
-                    this.ortList = response.data.data;
-                    console.log(this.ortList);
+                    this.ortList = response.data;
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            this.axios
+                .post("/api/index.php", {
+                    id: "land",
+                    func: "read"
+                })
+                .then(response => {
+                    this.landList = response.data;
                 })
                 .catch(error => {
                     console.log(error);
@@ -198,7 +210,7 @@
                     firstName: null,
                     lastName: null,
                     strasse: null,
-                    oid: 0,
+                    oid: null,
                     email: null,
                     telPriv: null,
                     telGesch: null
