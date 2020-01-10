@@ -4,10 +4,21 @@ function person() {
     switch ( getValue('post')->func ) {
         case 'speichern':
             $person = json_decode(json_encode(getValue('post')->person), true);
-            db_insert_person($person);
-            return $person;
+            $invalidPerson = validatePerson($person); # if true returns a array of the invalid variables
+            if (!$invalidPerson) {
+                db_insert_person($person);
+                return formatMessage(true, 'saved', db_select_personen_order_id());
+            } else {
+                return formatMessage(false, $invalidPerson, $person);
+            }
+        case 'readList':
+            return db_select_personen_order_id();
     }
     return null;
+}
+
+function validatePerson($person) {
+    return false;
 }
 
 function ort() {

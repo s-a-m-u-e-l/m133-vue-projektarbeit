@@ -82,7 +82,7 @@
     },
     methods: {
       getValidationClass (fieldName) {
-        const field = this.$v.form[fieldName]
+        const field = this.$v.form[fieldName];
 
         if (field) {
           return {

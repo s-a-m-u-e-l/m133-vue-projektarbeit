@@ -1,5 +1,5 @@
 <template>
-    <md-app class="page-container">
+    <md-app class="page-container" md-waterfall md-mode="fixed">
         <md-app-toolbar class="md-primary">
             <span class="md-title">Adressverwaltung</span>
         </md-app-toolbar>

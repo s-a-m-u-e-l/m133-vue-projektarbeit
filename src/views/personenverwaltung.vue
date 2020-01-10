@@ -1,8 +1,7 @@
 <template>
-    <!--  eslint-disable  -->
     <div>
-        <form novalidate class="md-layout" @submit.prevent="saveUser()">
-            <md-card class="md-layout-item md-size-50 md-small-size-100">
+        <form v-if="personList && ortList && landList" novalidate class="md-layout" @submit.prevent="validateUser()">
+            <md-card class="md-layout-item md-size-70 md-small-size-100">
                 <md-card-header>
                     <div class="md-title">Personenverwaltung</div>
                 </md-card-header>
@@ -10,26 +9,26 @@
                 <md-card-content>
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item md-small-size-100">
-                            <md-field :class="getValidationClass('firstName')">
+                            <md-field :class="getValidationClass('name')">
                                 <label for="first-name">Name</label>
                                 <md-input name="first-name" id="first-name" autocomplete="given-name"
-                                          v-model="person.firstName" :disabled="sending"/>
+                                          v-model="person.name" :disabled="sending"/>
                                 <span class="md-error"
-                                      v-if="!$v.person.firstName.required">The first name is required</span>
+                                      v-if="!this.$v.person.name.required">The first name is required</span>
                                 <span class="md-error"
-                                      v-else-if="!$v.person.firstName.minlength">Invalid first name</span>
+                                      v-else-if="this.invalidInputs.includes('name')">Invalid name</span>
                             </md-field>
                         </div>
 
                         <div class="md-layout-item md-small-size-100">
-                            <md-field :class="getValidationClass('lastName')">
+                            <md-field :class="getValidationClass('vorname')">
                                 <label for="last-name">Vorname</label>
                                 <md-input name="last-name" id="last-name" autocomplete="family-name"
-                                          v-model="person.lastName" :disabled="sending"/>
+                                          v-model="person.vorname" :disabled="sending"/>
                                 <span class="md-error"
-                                      v-if="!$v.person.lastName.required">The last name is required</span>
+                                      v-if="!this.$v.person.vorname.required">The last name is required</span>
                                 <span class="md-error"
-                                      v-else-if="!$v.person.lastName.minlength">Invalid last name</span>
+                                      v-else-if="this.invalidInputs.includes('vorname')">Invalid first name</span>
                             </md-field>
                         </div>
                     </div>
@@ -37,33 +36,34 @@
                     <div class="md-layout-item md-small-size-100">
                         <md-field :class="getValidationClass('strasse')">
                             <label for="strasse">Strasse</label>
-                            <md-input name="last-name" id="strasse" autocomplete="street" v-model="person.strasse"
+                            <md-input name="last-name" id="strasse" autocomplete="street-address"
+                                      v-model="person.strasse"
                                       :disabled="sending"/>
-                            <span class="md-error" v-if="!$v.person.strasse.required">The street name is required</span>
+                            <span class="md-error"
+                                  v-if="!this.$v.person.strasse.required">The street name is required</span>
                         </md-field>
                     </div>
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item md-small-size-50">
                             <md-field :class="getValidationClass('oid')">
-                                <label for="ort">Ort</label>
-                                <md-select name="gender" id="ort" v-model="person.oid" md-dense :disabled="sending">
-                                    <md-option ng-selected="true" disabled>Select</md-option>
-                                    <md-option v-for="ort in ortList" :value="ort.oid">{{ort.plz+' '+ort.ort}}</md-option>
+                                <label>Ort</label>
+                                <md-select name="gender" v-model="person.oid" md-dense :disabled="sending">
+                                    <md-option v-for="ort in ortList" v-bind:key="ort.oid" :value="ort.oid">
+                                        {{ort.plz+' '+ort.ort}}
+                                    </md-option>
                                 </md-select>
-                                <span class="md-error">The gender is required</span>
+                                <span class="md-error" v-if="!this.$v.person.oid.required">Selection required</span>
                             </md-field>
                         </div>
-
-
                         <div class="md-layout-item md-small-size-50">
-                            <md-field :class="getValidationClass('land')">
+                            <md-field :class="getValidationClass('lid')">
                                 <label for="land">Land</label>
-                                <md-select name="gender" id="land" v-model="person.gender" md-dense :disabled="sending">
-                                    <md-option></md-option>
-                                    <md-option value="M">M</md-option>
-                                    <md-option value="F">F</md-option>
+                                <md-select name="gender" id="land" v-model="person.lid" md-dense :disabled="sending">
+                                    <md-option v-for="land in landList" v-bind:key="land.lid" :value="land.lid">
+                                        {{land.land}}
+                                    </md-option>
                                 </md-select>
-                                <span class="md-error">The gender is required</span>
+                                <span class="md-error" v-if="!this.$v.person.lid.required">Selection required</span>
                             </md-field>
                         </div>
                     </div>
@@ -72,35 +72,55 @@
                         <label for="email">Email</label>
                         <md-input type="email" name="email" id="email" autocomplete="email" v-model="person.email"
                                   :disabled="sending"/>
-                        <span class="md-error" v-if="!$v.person.email.required">The email is required</span>
-                        <span class="md-error" v-else-if="!$v.person.email.email">Invalid email</span>
+                        <span class="md-error" v-if="!this.$v.person.email.required">The email is required</span>
+                        <span class="md-error" v-else-if="!this.$v.person.email.email">Invalid email</span>
                     </md-field>
                     <div class="md-layout-item md-small-size-100">
-                        <md-field :class="getValidationClass('telPriv')">
+                        <md-field :class="getValidationClass('tel_priv')">
                             <label for="telefon">Telefon Privat</label>
-                            <md-input name="last-name" id="telefon" autocomplete="family-name" v-model="person.lastName"
+                            <md-input name="last-name" id="telefon" autocomplete="tel" v-model="person.tel_priv"
                                       :disabled="sending"/>
-                            <span class="md-error" v-if="!$v.person.lastName.required">The last name is required</span>
-                            <span class="md-error" v-else-if="!$v.person.lastName.minlength">Invalid last name</span>
+                            <span class="md-error" v-if="!this.$v.person.tel_priv.minLength">Invalid phone number</span>
                         </md-field>
                     </div>
                     <div class="md-layout-item md-small-size-100">
-                        <md-field :class="getValidationClass('telGesch')">
+                        <md-field :class="getValidationClass('tel_gesch')">
                             <label for="tel-gesch">Telefon Geschäft</label>
-                            <md-input name="last-name" id="tel-gesch" autocomplete="family-name"
-                                      v-model="person.lastName" :disabled="sending"/>
-                            <span class="md-error" v-if="!$v.person.lastName.required">The last name is required</span>
-                            <span class="md-error" v-else-if="!$v.person.lastName.minlength">Invalid last name</span>
+                            <md-input name="last-name" id="tel-gesch" autocomplete="tel"
+                                      v-model="person.tel_gesch" :disabled="sending"/>
+                            <span class="md-error"
+                                  v-if="!this.$v.person.tel_gesch.minLength">Invalid phone number</span>
                         </md-field>
                     </div>
                 </md-card-content>
+                <div>
+                    <span class="page">Seite {{personIndex + 1}} von {{personList.length}}</span>
+                </div>
+                <div class="action-buttons">
+                    <div class="switch-page">
+                        <md-button class="md-icon-button md-raised md-primary md-mini first" v-on:click="first()"
+                                   :disabled="previousButtonDis">
+                            <md-icon>first_page</md-icon>
+                        </md-button>
+                        <md-button class="md-icon-button md-raised md-primary previous" v-on:click="previous()"
+                                   :disabled="previousButtonDis">
+                            <md-icon>navigate_before</md-icon>
+                        </md-button>
+                        <md-button class="md-icon-button md-raised md-primary next" v-on:click="next()"
+                                   :disabled="nextButtonDis">
+                            <md-icon>navigate_next</md-icon>
+                        </md-button>
+                        <md-button class="md-icon-button md-raised md-primary last" v-on:click="last()"
+                                   :disabled="nextButtonDis">
+                            <md-icon>last_page</md-icon>
+                        </md-button>
+                    </div>
 
-                <div class="md_button">
-
-                    <md-button class="md-raised md-primary">suchen</md-button>
-                    <md-button class="md-raised md-primary">neu</md-button>
-                    <md-button class="md-raised md-primary" type="submit">speichern</md-button>
-                    <md-button class="md-raised md-accent">löschen</md-button>
+                    <div class="md_button">
+                        <md-button class="md-raised md-accent" v-on:click="deletePerson()">löschen</md-button>
+                        <md-button class="md-raised" v-on:click="newElement()">neu</md-button>
+                        <md-button class="md-raised md-primary" type="submit">{{person.pid === null ? 'speichern':'update'}}</md-button>
+                    </div>
                 </div>
             </md-card>
 
@@ -116,27 +136,35 @@
         email,
         minLength
     } from 'vuelidate/lib/validators'
-    /* eslint-disable */
+
     export default {
         name: 'FormValidation',
         mixins: [validationMixin],
         data: () => ({
+            invalidInputs: [],
+            nextButtonDis: false,
+            previousButtonDis: false,
+            personIndex: 0,
+            personList: [],
             person: {
-                firstName: null,
-                lastName: null,
+                pid: null,
+                name: null,
+                vorname: null,
                 strasse: null,
                 oid: null,
+                lid: null,
                 email: null,
-                telPriv: null,
-                telGesch: null
+                tel_priv: null,
+                tel_gesch: null
             },
             ortList: [{
-                oid: 0,
-                plz: 0,
+                oid: null,
+                plz: null,
                 ort: null
             }],
             landList: [{
-
+                lid: null,
+                land: null
             }],
             userSaved: false,
             sending: false,
@@ -144,11 +172,11 @@
         }),
         validations: {
             person: {
-                firstName: {
+                name: {
                     required,
                     minLength: minLength(3)
                 },
-                lastName: {
+                vorname: {
                     required,
                     minLength: minLength(3)
                 },
@@ -158,19 +186,23 @@
                 oid: {
                     required
                 },
+                lid: {
+                    required
+                },
                 email: {
                     required,
                     email
                 },
-                telPriv: {
-                    required
+                tel_priv: {
+                    minLength: minLength(10)
                 },
-                telGesch: {
-                    required
+                tel_gesch: {
+                    minLength: minLength(10)
                 }
             }
         },
         mounted() {
+            this.getPersonList();
             this.axios
                 .post("/api/index.php", {
                     id: "ort",
@@ -195,29 +227,95 @@
                 });
         },
         methods: {
+            next() {
+                if (this.personIndex !== (this.personList.length - 1) && this.personIndex < this.personList.length) {
+                    this.personIndex++;
+                    this.person = this.personList[this.personIndex];
+                    this.checkNextPrevButton();
+                }
+            },
+            previous() {
+                if (this.personIndex > 0) {
+                    this.personIndex--;
+                    this.person = this.personList[this.personIndex];
+                    this.checkNextPrevButton();
+                }
+            },
+            first() {
+                this.personIndex = 0;
+                this.person = this.personList[this.personIndex];
+                this.checkNextPrevButton();
+            },
+            last() {
+                this.personIndex = this.personList.length - 1;
+                this.person = this.personList[this.personIndex];
+                this.checkNextPrevButton();
+            },
+            checkNextPrevButton() {
+                this.nextButtonDis = false;
+                this.previousButtonDis = false;
+                if (this.personIndex === (this.personList.length - 1)) {
+                    this.nextButtonDis = true;
+                }
+                if (this.personIndex === 0) {
+                    this.previousButtonDis = true;
+                }
+            },
             getValidationClass(fieldName) {
                 const field = this.$v.person[fieldName];
 
                 if (field) {
                     return {
-                        'md-invalid': field.$invalid && field.$dirty
+                        'md-invalid': field.$invalid && field.$dirty || this.invalidInputs.includes(fieldName)
                     }
                 }
+            },
+            getPersonList() {
+                this.axios
+                    .post("/api/index.php", {
+                        id: "person",
+                        func: "readList"
+                    })
+                    .then(response => {
+                        this.personList = response.data;
+                        this.first();
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            },
+            newElement() {
+                this.clearForm();
+                this.personList.push(this.person);
+                this.last();
             },
             clearForm() {
                 this.$v.$reset();
                 this.person = {
-                    firstName: null,
-                    lastName: null,
+                    pid: null,
+                    name: null,
+                    vorname: null,
                     strasse: null,
                     oid: null,
+                    lid: null,
                     email: null,
-                    telPriv: null,
-                    telGesch: null
+                    tel_priv: null,
+                    tel_gesch: null
                 };
             },
-            saveUser() {
-                this.$v.$touch();
+            deletePerson() {
+                if (this.person.pid) {
+                    this.axios.post('/api/index.php',
+                        {
+                            id: 'person',
+                            func: 'delete',
+                            person: this.person.pid
+                        }
+                    )
+                }
+                this.getPersonList();
+            },
+            savePerson() {
                 this.axios.post('/api/index.php',
                     {
                         id: 'person',
@@ -226,13 +324,18 @@
                     }
                 ).then(response => {
                     console.log(response.data);
+                    if (response.data.status) {
+                        this.personList = response.data.data;
+                        this.last();
+                    } else {
+                        this.invalidInputs = response.data.message;
+                    }
                 });
             },
             validateUser() {
                 this.$v.$touch();
-
                 if (!this.$v.$invalid) {
-                    this.saveUser()
+                    this.savePerson()
                 }
             }
         }
@@ -240,6 +343,23 @@
 </script>
 
 <style lang="scss" scoped>
+    .page {
+        user-select: none;
+        margin: 6px 8px;
+    }
+
+    .action-buttons {
+        user-select: none;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        padding-bottom: 25px;
+    }
+
+    .switch-page {
+        display: flex;
+    }
+
     .md-progress-bar {
         position: absolute;
         top: 0;
@@ -248,7 +368,7 @@
     }
 
     .md_button {
-        padding-left: 50px;
-        padding-bottom: 25px;
+        display: flex;
+        flex-wrap: wrap;
     }
 </style>
