@@ -3,10 +3,40 @@
 function person() {
     switch ( getValue('post')->func ) {
         case 'speichern':
-
-            db_insert_person( $values );
-            return 'appiii workss!!!';
+            $person = json_decode(json_encode(getValue('post')->person), true);
+            $invalidPerson = validatePerson($person); # if true returns a array of the invalid variables
+            if (!$invalidPerson) {
+                db_insert_person($person);
+                return formatMessage(true, 'saved', db_select_personen_order_id());
+            } else {
+                return formatMessage(false, $invalidPerson, $person);
+            }
+        case 'readList':
+            return db_select_personen_order_id();
     }
+    return null;
+}
+
+function validatePerson($person) {
+    return false;
+}
+
+function ort() {
+    switch ( getValue('post')->func ) {
+        case 'read':
+            $ortList = db_select_ort();
+            return $ortList;
+    }
+    return null;
+}
+
+function land() {
+    switch ( getValue('post')->func ) {
+        case 'read':
+            $landList = db_select_land();
+            return $landList;
+    }
+    return null;
 }
 
 function personAlt() {

@@ -86,6 +86,14 @@ function db_select_personen() {
 	return sqlSelect( $sql );
 }
 
+function db_select_personen_order_id() {
+    $sql = "select * from personen
+		left join ort on personen.oid = ort.oid
+		left join land on personen.lid = land.lid
+		order by pid";
+    return sqlSelect( $sql );
+}
+
 /**
  * Nach den gew�nschten Personen suchen
  *
@@ -119,7 +127,7 @@ function db_select_person_pid( $pid ) {
  * @param  $values  Assoziativer Array mit den Werten
  */
 function db_insert_person($values) {
-	if ( empty($values['oid']) ) $oid = "Null";
+    if ( empty($values['oid']) ) $oid = "Null";
 	else $oid = "'".$values['oid']."'";
 	if ( empty($values['lid']) ) $lid = "Null";
 	else $lid = "'".$values['lid']."'";
@@ -127,7 +135,7 @@ function db_insert_person($values) {
 	$sql = "insert into personen (name, vorname, strasse, oid, email, tel_priv, tel_gesch, lid)
 		values ('".$values['name']."','".$values['vorname']."','".$values['strasse']."',".$oid.",'".
 		$values['email']."','".$values['tel_priv']."','".$values['tel_gesch']."',".$lid.")";
-        sqlQuery($sql);
+    sqlQuery($sql);
 }
 
 /**
