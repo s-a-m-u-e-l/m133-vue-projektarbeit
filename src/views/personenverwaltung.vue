@@ -125,6 +125,10 @@
             </md-card>
 
             <md-snackbar :md-active.sync="userSaved">The user {{ lastUser }} was saved with success!</md-snackbar>
+            <md-snackbar :md-position="position" :md-duration="isInfinity ? Infinity : duration" :md-active.sync="showSnackbar" md-persistent>
+                <span>{{snackbarMessage}}</span>
+                <md-button class="md-primary" @click="showSnackbar = false">ok</md-button>
+            </md-snackbar>
         </form>
     </div>
 </template>
@@ -141,6 +145,12 @@
         name: 'FormValidation',
         mixins: [validationMixin],
         data: () => ({
+            position: 'center',
+            duration: 4000,
+            isInfinity: false,
+            snackbarMessage: '',
+            showSnackbar: false,
+
             invalidInputs: [],
             nextButtonDis: false,
             previousButtonDis: false,
@@ -227,6 +237,11 @@
                 });
         },
         methods: {
+            checkout(index) {
+                this.personIndex = index;
+                this.person = this.personList[this.personIndex];
+                this.checkNextPrevButton();
+            },
             next() {
                 if (this.personIndex !== (this.personList.length - 1) && this.personIndex < this.personList.length) {
                     this.personIndex++;
@@ -313,24 +328,37 @@
                         {
                             id: 'person',
                             func: 'delete',
-                            person: this.person.pid
+                            pid: this.person.pid
                         }
-                    )
+                    ).then(response => {
+                        if (response.data.message === 'deleted') {
+                            this.personList = response.data.data;
+                            if (this.personList.length === 0) {
+                                this.newElement();
+                            } else {
+                                this.checkout(this.personIndex - 1);
+                            }
+                            this.openSnackbar('person successfully deleted');
+                        }
+                    })
                 }
-                this.getPersonList();
             },
             savePerson() {
                 this.axios.post('/api/index.php',
                     {
                         id: 'person',
-                        func: 'speichern',
+                        func: 'save',
                         person: this.person
                     }
                 ).then(response => {
-                    console.log(response.data);
                     if (response.data.status) {
                         this.personList = response.data.data;
-                        this.last();
+                        if (response.data.message === 'saved') {
+                            this.last();
+                            this.openSnackbar('person successfully saved');
+                        } else if (response.data.message === 'updated') {
+                            this.openSnackbar('person successfully updated');
+                        }
                     } else {
                         this.invalidInputs = response.data.message;
                     }
@@ -341,6 +369,10 @@
                 if (!this.$v.$invalid) {
                     this.savePerson()
                 }
+            },
+            openSnackbar(message) {
+                this.snackbarMessage = message;
+                this.showSnackbar = true;
             }
         }
     }
