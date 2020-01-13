@@ -278,7 +278,11 @@
                     })
                     .then(response => {
                         this.personList = response.data;
-                        this.first();
+                        if (this.personList.length !== 0) {
+                            this.first();
+                        } else {
+                            this.newElement();
+                        }
                     })
                     .catch(error => {
                         console.log(error);
