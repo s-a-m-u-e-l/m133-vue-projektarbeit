@@ -336,7 +336,11 @@
                             if (this.personList.length === 0) {
                                 this.newElement();
                             } else {
-                                this.checkout(this.personIndex - 1);
+                                if (this.personIndex !== 0) {
+                                    this.checkout(this.personIndex - 1);
+                                } else {
+                                    this.checkout(0)
+                                }
                             }
                             this.openSnackbar('person successfully deleted');
                         }
