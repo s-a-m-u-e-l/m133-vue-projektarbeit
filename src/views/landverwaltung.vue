@@ -1,7 +1,7 @@
 <template>
     <div>
         <form novalidate class="md-layout" @submit.prevent="validateUser">
-            <md-card class="md-layout-item md-size-50 md-small-size-100">
+            <md-card class="md-layout-item md-size-40 md-small-size-100">
                 <md-card-header>
                     <div class="md-title">Landverwaltung</div>
                 </md-card-header>
@@ -9,45 +9,46 @@
                 <md-card-content>
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item md-small-size-100">
-                            <md-field :class="getValidationClass('firstName')">
+                            <md-field :class="getValidationClass('land')">
                                 <label for="land">Land</label>
                                 <md-input
                                         name="lande"
                                         id="land"
-                                        autocomplete="given-name"
-                                        v-model="landform.land"
-                                        :disabled="sending"
-                                />
-                                <span class="md-error" v-if="!$v.landform.land.required"
-                                >A Landname is required</span
-                                >
+                                        autocomplete="disabled"
+                                        v-model="land.land"/>
+                                <span class="md-error" v-if="!this.$v.land.land.required">A Landname is required</span>
                                 <span
                                         class="md-error"
-                                        v-else-if="this.invalidInputs.includes('land')"
-                                >Invalid Landname</span
-                                >
+                                        v-else-if="this.invalidInputs.includes('land')">Invalid Landname</span>
                             </md-field>
                         </div>
                     </div>
                 </md-card-content>
                 <div class="md_button">
-                    <md-button class="md-raised md-primary">suchen</md-button>
+                    <md-button class="md-raised md-accent" v-on:click="deleteLand()">löschen</md-button>
+                    <md-button class="md-raised" v-on:click="searchLand()">suchen</md-button>
                     <md-button class="md-raised" v-on:click="newElement()">neu</md-button>
                     <md-button class="md-raised md-primary" type="submit">{{
                         land.lid === null ? "speichern" : "update"
                         }}
                     </md-button>
-                    <md-button class="md-raised md-accent" v-on:click="deletePerson()"
-                    >löschen
-                    </md-button
-                    >
                 </div>
             </md-card>
+            <md-table class="md-layout-item md-size-50 md-small-size-100" v-model="landList" md-card
+                      @md-selected="onSelect">
+                <md-table-toolbar>
+                    <h1 class="md-title">Land Liste</h1>
+                </md-table-toolbar>
+                <md-table-row class="md-primary" slot="md-table-row" slot-scope="{ item }" md-selectable="single">
+                    <md-table-cell md-label="Land">{{ item.land }}</md-table-cell>
+                </md-table-row>
+            </md-table>
 
-            <md-snackbar :md-active.sync="landSaved"
-            >The Land {{ land }} was saved with success!
-            </md-snackbar
-            >
+            <md-snackbar :md-position="position" :md-duration="isInfinity ? Infinity : duration"
+                         :md-active.sync="showSnackbar" md-persistent>
+                <span>{{snackbarMessage}}</span>
+                <md-button class="md-primary" @click="showSnackbar = false">ok</md-button>
+            </md-snackbar>
         </form>
     </div>
 </template>
@@ -65,16 +66,22 @@
         name: 'FormValidation',
         mixins: [validationMixin],
         data: () => ({
+            selected: {},
+            position: 'center',
+            duration: 4000,
+            isInfinity: false,
+            snackbarMessage: '',
+            showSnackbar: false,
+
             invalidInputs: [],
             landList: [],
-            landform: {
+            land: {
+                lid: null,
                 land: null,
             },
-            landSaved: false,
-            sending: false,
         }),
         validations: {
-            landform: {
+            land: {
                 land: {
                     required,
                     minLength: minLength(3)
@@ -85,14 +92,24 @@
             this.getLandList();
         },
         methods: {
+            searchLand() {
+                if (this.land.land != null && this.land.land !== '') {
+                    this.landList = this.landList.filter(value => value.land.toLowerCase().includes(this.land.land.toLowerCase()));
+                } else {
+                    this.getLandList();
+                }
+            },
             getValidationClass(fieldName) {
-                const field = this.$v.landform[fieldName];
+                const field = this.$v.land[fieldName];
 
                 if (field) {
                     return {
                         'md-invalid': field.$invalid && field.$dirty || this.invalidInputs.includes(fieldName)
                     }
                 }
+            },
+            newElement() {
+                this.clearForm();
             },
             getLandList() {
                 this.axios.post("/api/index.php", {
@@ -101,50 +118,69 @@
                 })
                     .then(response => {
                         this.landList = response.data;
-                        this.first();
                     }).catch(error => {
                     console.log(error)
-
                 });
             },
             clearForm() {
                 this.$v.$reset();
-                this.formland = {
+                this.land = {
                     lid: null,
                     land: null
                 };
-
-            },
-            deleteLand() {
-                if (this.formland.lid) {
-                    this.axios.post('/api/index.php', {
-                            id: 'land',
-                            func: 'delete',
-                            landform: this.landform.lid
-                        }
-                    )
-                }
-                this.getLandList();
             },
             saveLand() {
-                this.axios.post('/api/index.php', {
-                    id: 'land',
-                    func: 'speichern',
-                    landform: this.landform
-                }).then(response => {
-                    console.log(response.data);
-                    if (response.data.status) {
-                        this.landList = response.data.data;
-                    } else {
-                        this.invalidInputs = response.data.message;
-                    }
-                });
+                if (this.land.land) {
+                    this.axios.post('/api/index.php', {
+                        id: 'land',
+                        func: 'save',
+                        land: this.land
+                    }).then(response => {
+                        if (response.data.status) {
+                            this.landList = response.data.data;
+                            this.openSnackbar('land successfully saved');
+                            this.clearForm();
+                        } else {
+                            this.invalidInputs = response.data.message;
+                        }
+                    });
+                }
             },
             validateUser() {
                 this.$v.$touch();
 
                 if (!this.$v.$invalid) {
-                    this.saveLand()
+                    this.saveLand();
+                }
+            },
+            openSnackbar(message) {
+                this.snackbarMessage = message;
+                this.showSnackbar = true;
+            },
+            onSelect(item) {
+                if (item) {
+                    this.land = item;
+                } else {
+                    this.clearForm();
+                }
+            },
+            deleteLand() {
+                if (this.land.lid != null) {
+                    this.axios.post('/api/index.php',
+                        {
+                            id: 'land',
+                            func: 'delete',
+                            lid: this.land.lid
+                        }
+                    ).then(response => {
+                        if (response.data.message === 'deleted') {
+                            this.landList = response.data.data;
+                            this.openSnackbar('person successfully deleted');
+                            this.clearForm();
+                        }
+                    })
+                } else {
+                    this.clearForm();
                 }
             }
         }
@@ -152,6 +188,10 @@
 </script>
 
 <style lang="scss" scoped>
+    .card-land-liste {
+        padding: 10px;
+    }
+
     .md-progress-bar {
         position: absolute;
         top: 0;
@@ -160,7 +200,9 @@
     }
 
     .md_button {
-        padding-left: 50px;
+        display: flex;
+        justify-content: center;
         padding-bottom: 25px;
+        flex-wrap: wrap;
     }
 </style>

@@ -33,15 +33,15 @@ function db_delete_land( $lid ) {
         sqlQuery($sql);
 }
 
-function db_insert_land() {
+function db_insert_land($land) {
 	$sql = "insert into land (land)
-		values ('".$_REQUEST['land']."')";
+		values ('".$land['land']."')";
         sqlQuery($sql);
 }
 
-function db_update_land() {
-	$sql = "update land set land='".$_REQUEST['land']."'
-		where lid = '".$_REQUEST['lid']."'";
+function db_update_land($land) {
+	$sql = "update land set land='".$land['land']."'
+		where lid = '".$land['lid']."'";
         sqlQuery($sql);
 }
 

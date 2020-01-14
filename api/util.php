@@ -110,7 +110,7 @@ function CheckNumber( $value ) {
 
 function isCleanNumber( $value ) {
     if ( !is_numeric($value) ) return false;
-    $pattern_number = '/^[0-9]*$/';
+    $pattern_number = '/\+?([0-9]{2})-?([0-9]{3})-?([0-9]{6,7})/';
     if ( preg_match($pattern_number, $value) ) return true;
     else return false;
     return true;

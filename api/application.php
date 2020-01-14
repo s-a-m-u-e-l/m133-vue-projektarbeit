@@ -1,7 +1,7 @@
-
 <?php
-function person() {
-    switch ( getValue('post')->func ) {
+function person()
+{
+    switch (getValue('post')->func) {
         case 'save':
             $person = json_decode(json_encode(getValue('post')->person), true);
             $invalidPerson = validatePerson($person); # if true returns a array of the invalid variables
@@ -10,7 +10,7 @@ function person() {
                     db_insert_person($person);
                     return formatMessage(true, 'saved', db_select_personen_order_id());
                 } else {
-                    db_update_person($person['pid'],$person);
+                    db_update_person($person['pid'], $person);
                     return formatMessage(true, 'updated', db_select_personen_order_id());
                 }
             } else {
@@ -19,19 +19,44 @@ function person() {
         case 'readList':
             return db_select_personen_order_id();
         case 'delete':
-            $pid = getValue('post') -> pid;
+            $pid = getValue('post')->pid;
             db_delete_person($pid);
             return formatMessage(true, 'deleted', db_select_personen_order_id());
     }
     return null;
 }
 
-function validatePerson($person) {
-    return false;
+function validatePerson($person)
+{
+    $invalidValues = [];
+    if (!CheckName($person['name'])) {
+        array_push($invalidValues, 'name');
+    }
+    if (!CheckName($person['vorname'])) {
+        array_push($invalidValues, 'vorname');
+    }
+    if (!CheckEmpty($person['strasse'])) {
+        array_push($invalidValues, 'strasse');
+    }
+    if (!CheckEmail($person['email'])) {
+        array_push($invalidValues, 'email');
+    }
+    if (!CheckCleanNumberEmpty($person['tel_priv'], 10)) {
+        array_push($invalidValues, 'tel_priv');
+    }
+    if (!CheckCleanNumberEmpty($person['tel_gesch'], 10)) {
+        array_push($invalidValues, 'tel_gesch');
+    }
+    if (sizeof($invalidValues) === 0) {
+        return false;
+    } else {
+        return $invalidValues;
+    }
 }
 
-function ort() {
-    switch ( getValue('post')->func ) {
+function ort()
+{
+    switch (getValue('post')->func) {
         case 'read':
             $ortList = db_select_ort();
             return $ortList;
@@ -39,69 +64,37 @@ function ort() {
     return null;
 }
 
-function land() {
-    switch ( getValue('post')->func ) {
-        case 'read':
+function land()
+{
+    switch (getValue('post')->func) {
+        case 'readList':
             $landList = db_select_land();
             return $landList;
-        case 'speichern':
-            $land = json_decode(json_decode(getValue('post')->land),true);
+        case 'save':
+            $land = json_decode(json_encode(getValue('post')->land), true);
             $invalidLand = validateLand($land);
-            if(!$invalidLand){
-                db_insert_land($land);
-                return formatMessage(true, 'saved', db_select_land_lid());
+            if (!$invalidLand) {
+                if (empty($land['lid'])) {
+                    db_insert_land($land);
+                } else {
+                    db_update_land($land);
+                }
+                return formatMessage(true, 'saved', db_select_land());
             } else {
                 return formatMessage(false, $invalidLand, $land);
             }
-             case 'readList':
-            return db_select_land_lid();
+        case 'delete':
+            $lid = getValue('post')->lid;
+            db_delete_land($lid);
+            return formatMessage(true, 'deleted', db_select_land());
     }
     return null;
 
 }
-function validateLand($land) {
+
+function validateLand($land)
+{
     return false;
 }
 
-function personAlt() {
-    setValue('phpmodule', $_SERVER['SCRIPT_NAME']."?id=".__FUNCTION__);
-
-    if ( isset($_REQUEST['suchen']) ) {
-        session_save();
-    } else if ( isset($_REQUEST['neu']) ) {
-        session_clear();
-        redirect(__FUNCTION__);
-        exit();
-    } else if ( isset($_REQUEST['speichern']) ) {
-        if ( checkInputPerson() ) {
-            if ( empty($_REQUEST['pid']) ) db_insert_person($_REQUEST);
-            else {
-                db_update_person( $_REQUEST['pid'], $_REQUEST );
-            }
-        } else {
-            setValues($_REQUEST);
-        }
-    } else if ( isset($_REQUEST['loeschen']) ) {
-        db_delete_person( $_REQUEST['pid'] );
-    }
-
-    if ( session_check() ) {
-        $data = db_select_personen_search( $_SESSION );
-        $sdata = $data[0];
-        if ( count($data) ) {
-            setValue('data', $data);
-            if (isset($_REQUEST['next'])) {
-                $sdata = getNextPerson($data,  $_REQUEST['pid']);
-            } else if (isset($_REQUEST['previous'])) {
-                $sdata = getPreviousPerson($data, $_REQUEST['pid']);
-            }
-            setValues($sdata);
-        }
-    }
-
-    setValue('orte', db_select_ort());
-    setValue('droport', dropOrt( $sdata['oid'] ));
-    setValue('dropland', dropLand( $sdata['lid'] ));
-    return runTemplate(getValue('cfg_template_path')."personen_verwaltung_1.htm.php");
-}
 ?>

@@ -16,7 +16,7 @@
                                 <span class="md-error"
                                       v-if="!this.$v.person.name.required">The first name is required</span>
                                 <span class="md-error"
-                                      v-else-if="this.invalidInputs.includes('name')">Invalid name</span>
+                                      v-else-if="this.invalidInputs.includes('name') || this.invalidInputs.includes('name')">Invalid name</span>
                             </md-field>
                         </div>
 
@@ -28,7 +28,7 @@
                                 <span class="md-error"
                                       v-if="!this.$v.person.vorname.required">The last name is required</span>
                                 <span class="md-error"
-                                      v-else-if="this.invalidInputs.includes('vorname')">Invalid first name</span>
+                                      v-else-if="this.invalidInputs.includes('vorname') || this.invalidInputs.includes('vorname')">Invalid first name</span>
                             </md-field>
                         </div>
                     </div>
@@ -40,7 +40,7 @@
                                       v-model="person.strasse"
                                       :disabled="sending"/>
                             <span class="md-error"
-                                  v-if="!this.$v.person.strasse.required">The street name is required</span>
+                                  v-if="!this.$v.person.strasse.required || this.invalidInputs.includes('strasse')">The street name is required</span>
                         </md-field>
                     </div>
                     <div class="md-layout md-gutter">
@@ -73,14 +73,14 @@
                         <md-input type="email" name="email" id="email" autocomplete="email" v-model="person.email"
                                   :disabled="sending"/>
                         <span class="md-error" v-if="!this.$v.person.email.required">The email is required</span>
-                        <span class="md-error" v-else-if="!this.$v.person.email.email">Invalid email</span>
+                        <span class="md-error" v-else-if="!this.$v.person.email.email || this.invalidInputs.includes('email')">Invalid email</span>
                     </md-field>
                     <div class="md-layout-item md-small-size-100">
                         <md-field :class="getValidationClass('tel_priv')">
                             <label for="telefon">Telefon Privat</label>
                             <md-input name="last-name" id="telefon" autocomplete="tel" v-model="person.tel_priv"
                                       :disabled="sending"/>
-                            <span class="md-error" v-if="!this.$v.person.tel_priv.minLength">Invalid phone number</span>
+                            <span class="md-error" v-if="!this.$v.person.tel_priv.minLength || this.invalidInputs.includes('tel_priv')">Invalid phone number</span>
                         </md-field>
                     </div>
                     <div class="md-layout-item md-small-size-100">
@@ -89,7 +89,7 @@
                             <md-input name="last-name" id="tel-gesch" autocomplete="tel"
                                       v-model="person.tel_gesch" :disabled="sending"/>
                             <span class="md-error"
-                                  v-if="!this.$v.person.tel_gesch.minLength">Invalid phone number</span>
+                                  v-if="!this.$v.person.tel_gesch.minLength || this.invalidInputs.includes('tel_gesch')">Invalid phone number</span>
                         </md-field>
                     </div>
                 </md-card-content>
@@ -124,7 +124,6 @@
                 </div>
             </md-card>
 
-            <md-snackbar :md-active.sync="userSaved">The user {{ lastUser }} was saved with success!</md-snackbar>
             <md-snackbar :md-position="position" :md-duration="isInfinity ? Infinity : duration" :md-active.sync="showSnackbar" md-persistent>
                 <span>{{snackbarMessage}}</span>
                 <md-button class="md-primary" @click="showSnackbar = false">ok</md-button>
@@ -227,7 +226,7 @@
             this.axios
                 .post("/api/index.php", {
                     id: "land",
-                    func: "read"
+                    func: "readList"
                 })
                 .then(response => {
                     this.landList = response.data;
@@ -235,6 +234,7 @@
                 .catch(error => {
                     console.log(error);
                 });
+
         },
         methods: {
             checkout(index) {
@@ -363,7 +363,9 @@
                         } else if (response.data.message === 'updated') {
                             this.openSnackbar('person successfully updated');
                         }
+                        this.invalidInputs = [];
                     } else {
+                        console.log(response);
                         this.invalidInputs = response.data.message;
                     }
                 });
