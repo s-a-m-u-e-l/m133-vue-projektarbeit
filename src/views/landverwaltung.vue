@@ -63,7 +63,7 @@
     } from 'vuelidate/lib/validators'
 
     export default {
-        name: 'FormValidation',
+        name: 'LandVerwaltung',
         mixins: [validationMixin],
         data: () => ({
             selected: {},

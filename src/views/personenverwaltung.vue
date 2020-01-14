@@ -141,7 +141,7 @@
     } from 'vuelidate/lib/validators'
 
     export default {
-        name: 'FormValidation',
+        name: 'PersonenVerwaltung',
         mixins: [validationMixin],
         data: () => ({
             position: 'center',
