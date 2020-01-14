@@ -44,8 +44,23 @@ function land() {
         case 'read':
             $landList = db_select_land();
             return $landList;
+        case 'speichern':
+            $land = json_decode(json_decode(getValue('post')->land),true);
+            $invalidLand = validateLand($land);
+            if(!$invalidLand){
+                db_insert_land($land);
+                return formatMessage(true, 'saved', db_select_land_lid());
+            } else {
+                return formatMessage(false, $invalidLand, $land);
+            }
+             case 'readList':
+            return db_select_land_lid();
     }
     return null;
+
+}
+function validateLand($land) {
+    return false;
 }
 
 function personAlt() {
