@@ -4,7 +4,7 @@ function person()
     switch (getValue('post')->func) {
         case 'save':
             $person = json_decode(json_encode(getValue('post')->person), true);
-            $invalidPerson = validatePerson($person); # if true returns a array of the invalid variables
+            $invalidPerson = isInvalidPerson($person); # if true returns a array of the invalid variables
             if (!$invalidPerson) {
                 if (empty($person['pid'])) {
                     db_insert_person($person);
@@ -26,7 +26,8 @@ function person()
     return null;
 }
 
-function validatePerson($person)
+
+function isInvalidPerson($person)
 {
     $invalidValues = [];
     if (!CheckName($person['name'])) {
@@ -54,12 +55,44 @@ function validatePerson($person)
     }
 }
 
+function isInvalidOrt($ort) {
+    $invalidValues = [];
+    if (!CheckPLZ($ort['plz'])) {
+        array_push($invalidValues, 'plz');
+    }
+    if (!CheckOrt($ort['ort'])) {
+        array_push($invalidValues, 'ort');
+    }
+    if (sizeof($invalidValues) === 0) {
+        return false;
+    } else {
+        return $invalidValues;
+    }
+}
+
 function ort()
 {
     switch (getValue('post')->func) {
         case 'read':
             $ortList = db_select_ort();
             return $ortList;
+        case 'delete':
+            $oid = getValue('post')->oid;
+            db_delete_ort($oid);
+            return formatMessage(true, 'deleted', db_select_ort());
+        case 'save':
+            $ort = json_decode(json_encode(getValue('post')->ort), true);
+            $invalidOrt = isInvalidOrt($ort);
+            if (!$invalidOrt) {
+                if (empty($ort['oid'])) {
+                    db_insert_ort($ort);
+                } else {
+                    db_update_ort($ort);
+                }
+                return formatMessage(true, 'saved', db_select_ort());
+            } else {
+                return formatMessage(false, $invalidOrt, $ort);
+            }
     }
     return null;
 }
@@ -72,7 +105,7 @@ function land()
             return $landList;
         case 'save':
             $land = json_decode(json_encode(getValue('post')->land), true);
-            $invalidLand = validateLand($land);
+            $invalidLand = isInvalidLand($land);
             if (!$invalidLand) {
                 if (empty($land['lid'])) {
                     db_insert_land($land);
@@ -92,7 +125,7 @@ function land()
 
 }
 
-function validateLand($land)
+function isInvalidLand($land)
 {
     return false;
 }

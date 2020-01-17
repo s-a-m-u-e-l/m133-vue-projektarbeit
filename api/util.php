@@ -76,14 +76,14 @@ function CheckEmail( $value, $empty='N' ) {
 }
 
 function CheckName( $value, $empty='N' ) {
-    $pattern_name = '/^[a-zA-ZÄÖÜäöü \-]{2,}$/';
+    $pattern_name = '/^[a-zA-Zï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ \-]{2,}$/';
     if ($empty=='Y' && empty($value)) return true;
     if ( preg_match($pattern_name, $value) ) return true;
     else return false;
 }
 
 function CheckOrt( $value, $empty='N' ) {
-    $pattern_ort = '/^[a-zA-ZÄÖÜäöü \-\.]{2,}$/';
+    $pattern_ort = '/^[a-zA-Z \-\.]{2,}$/';
     if ($empty=='Y' && empty($value)) return true;
     if (empty($value)) return false;
     if ( preg_match($pattern_ort, $value) ) return true;

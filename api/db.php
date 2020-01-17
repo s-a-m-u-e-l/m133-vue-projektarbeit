@@ -58,15 +58,15 @@ function db_select_ort_oid( $oid ) {
 	return sqlSelect( $sql );
 }
 
-function db_insert_ort() {
+function db_insert_ort($ort) {
 	$sql = "insert into ort (plz, ort)
-		values ('".$_REQUEST['plz']."','".$_REQUEST['ort']."')";
+		values ('".$ort['plz']."','".$ort['ort']."')";
         sqlQuery($sql);
 }
 
-function db_update_ort() {
-	$sql = "update ort set plz='".$_REQUEST['plz']."', ort='".$_REQUEST['ort']."'
-		where oid = '".$_REQUEST['oid']."'";
+function db_update_ort($ort) {
+	$sql = "update ort set plz='".$ort['plz']."', ort='".$ort['ort']."'
+		where oid = '".$ort['oid']."'";
         sqlQuery($sql);
 }
 
