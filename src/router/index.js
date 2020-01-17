@@ -36,5 +36,10 @@ export default new VueRouter({
             name: "personenverwaltung",
             component: () => import("../views/personenverwaltung.vue")
         },
+        {
+            path: "/dialog",
+            name: "dialog",
+            component: () => import("../views/dialog.vue")
+        },
     ]
 });

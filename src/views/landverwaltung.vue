@@ -28,7 +28,7 @@
                     <md-button class="md-raised md-accent" v-on:click="deleteLand()">löschen</md-button>
                     <md-button class="md-raised" v-on:click="searchLand()">suchen</md-button>
                     <md-button class="md-raised" v-on:click="newElement()">neu</md-button>
-                    <md-button class="md-raised md-primary" type="submit">{{
+                    <md-button class="md-raised md-primary" type="submit" :disabled="this.$v.$invalid">{{
                         land.lid === null ? "speichern" : "update"
                         }}
                     </md-button>
