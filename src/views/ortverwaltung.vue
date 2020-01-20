@@ -134,7 +134,7 @@
                         func: "read"
                     })
                     .then(response => {
-                        this.setTableList(response.data)
+                        this.setTableList(response.data);
                         this.searchOnTable();
                     })
                     .catch(error => {
