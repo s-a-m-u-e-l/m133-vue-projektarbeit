@@ -1,10 +1,13 @@
 <template>
     <md-app class="page-container" md-waterfall md-mode="fixed">
         <md-app-toolbar class="md-primary">
+            <md-button class="md-icon-button" @click="menuVisible = !menuVisible">
+                <md-icon>menu</md-icon>
+            </md-button>
             <span class="md-title">Adressverwaltung</span>
         </md-app-toolbar>
 
-        <md-app-drawer class="sidenav" md-permanent="full">
+        <md-app-drawer class="sidenav" md-permanent="full" :md-active.sync="menuVisible">
             <md-toolbar class="md-transparent" md-elevation="0">
                 Navigation
             </md-toolbar>
@@ -38,12 +41,6 @@
         border: 1px solid rgba(#000, 0.12);
     }
 
-    // Demo purposes only
-    .md-drawer {
-        width: 230px;
-        max-width: calc(100vw - 125px);
-    }
-
     .sidenav {
         width: auto;
     }
@@ -56,6 +53,9 @@
 
 <script>
     export default {
-        name: "Normal"
+        name: "Normal",
+        data: () => ({
+            menuVisible: false
+        })
     };
 </script>
