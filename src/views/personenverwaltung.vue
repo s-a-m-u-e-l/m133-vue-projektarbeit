@@ -310,6 +310,7 @@
             },
             clearForm() {
                 this.$v.$reset();
+                this.invalidInputs = [];
                 this.person = {
                     pid: null,
                     name: null,

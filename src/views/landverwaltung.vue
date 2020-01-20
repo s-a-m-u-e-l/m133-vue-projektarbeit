@@ -124,6 +124,7 @@
             },
             clearForm() {
                 this.$v.$reset();
+                this.invalidInputs = [];
                 this.land = {
                     lid: null,
                     land: null

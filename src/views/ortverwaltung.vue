@@ -197,9 +197,6 @@
                 this.ortList = list;
                 this.searched = list;
             },
-            newUser() {
-                window.alert('Noop')
-            },
             searchOnTable() {
                 this.searched = searchByName(this.ortList, this.search)
             },

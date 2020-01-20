@@ -76,7 +76,7 @@ function CheckEmail( $value, $empty='N' ) {
 }
 
 function CheckName( $value, $empty='N' ) {
-    $pattern_name = '/^[a-zA-Z������ \-]{2,}$/';
+    $pattern_name = '/^[a-zA-Z \-]{2,}$/';
     if ($empty=='Y' && empty($value)) return true;
     if ( preg_match($pattern_name, $value) ) return true;
     else return false;

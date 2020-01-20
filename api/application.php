@@ -55,13 +55,27 @@ function isInvalidPerson($person)
     }
 }
 
-function isInvalidOrt($ort) {
+function isInvalidOrt($ort)
+{
     $invalidValues = [];
     if (!CheckPLZ($ort['plz'])) {
         array_push($invalidValues, 'plz');
     }
     if (!CheckOrt($ort['ort'])) {
         array_push($invalidValues, 'ort');
+    }
+    if (sizeof($invalidValues) === 0) {
+        return false;
+    } else {
+        return $invalidValues;
+    }
+}
+
+function isInvalidLand($land)
+{
+    $invalidValues = [];
+    if (!CheckName($land['land'])) {
+        array_push($invalidValues, 'land');
     }
     if (sizeof($invalidValues) === 0) {
         return false;
@@ -123,11 +137,6 @@ function land()
     }
     return null;
 
-}
-
-function isInvalidLand($land)
-{
-    return false;
 }
 
 ?>
