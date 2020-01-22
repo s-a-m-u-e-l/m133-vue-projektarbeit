@@ -2,23 +2,21 @@
 
 ## Project setup
 ```
-yarn install
+npm install
 ```
 
-### Compiles and hot-reloads for development
+### Start app
 ```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
+vue-cli-service serve
 ```
 
-### Lints and fixes files
+### Start API
 ```
-yarn lint
+php -S 127.0.0.1:8085
 ```
+
+
+
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
